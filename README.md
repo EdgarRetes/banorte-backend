@@ -197,8 +197,6 @@ Respuesta típica:
 - `/audit-log` → auditoría de cambios y eventos  
 - Integraciones adicionales y mejoras en validaciones y manejo de errores
 
-> Nota: **categories**, **states** y **auth** ya están implementados. Los módulos listados en esta sección están en la cola de desarrollo.
-
 ---
 
 ## Scripts útiles
