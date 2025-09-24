@@ -10,6 +10,9 @@ import { LayoutFieldsModule } from './layout_fields/rules.module';
 import { LayoutValuesController } from './layout_values/layout_values.controller';
 import { LayoutValuesModule } from './layout_values/layout_values.module';
 import { FileParsersModule } from './file_parsers/file_parsers.module';
+import { CategoriesModule } from './categories/categories.module';
+import { StatesModule } from './states/states.module';
+
 
 @Module({
   imports: [
@@ -23,6 +26,8 @@ import { FileParsersModule } from './file_parsers/file_parsers.module';
     LayoutValuesModule,
     FileParsersModule,
     AuthModule,
+    CategoriesModule,
+    StatesModule,
   ],
 })
 export class AppModule { }
