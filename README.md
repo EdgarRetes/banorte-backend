@@ -1,8 +1,9 @@
 # Banorte Backend  
-# TEST BUILD V2
+# TEST BUILD V3
 
 Este es el repositorio del backend del proyecto **Polaris**, construido con **NestJS**, **Prisma** y **PostgreSQL**.  
-El proyecto expone una API REST modular para la gestión de usuarios, empresas y reglas de negocio.
+El proyecto expone una API REST modular para la gestión de usuarios, empresas, categorías, estados y reglas de negocio.  
+Incluye autenticación y autorización con **JWT**.
 
 ---
 
@@ -52,6 +53,12 @@ docker compose up -d
 Esto inicia:
 - PostgreSQL en `localhost:5433`
 - pgAdmin en `http://localhost:5050`
+
+Si ya tienes contenedores con el mismo nombre, elimina los antiguos antes:
+```bash
+docker ps -a
+docker rm -f <container_id>
+```
 
 ---
 
@@ -106,44 +113,47 @@ El backend quedará disponible en `http://localhost:3000`.
 
 ---
 
-## Endpoints de Autenticación
+## Endpoints Disponibles
 
-### Registro de usuario (`/auth/register`)
-- `POST /auth/register`  
-- Recibe los datos de un nuevo usuario:
-```json
-{
-  "firstName": "Hector",
-  "middleName": "M",
-  "lastName1": "Martinez",
-  "lastName2": "Lopez",
-  "email": "hector@banorte.com",
-  "password": "password123"
-}
-```
-- Si no se provee un rol, se asigna automáticamente el rol **User**.
-- Responde con los datos del usuario creado (sin la contraseña).
+### Autenticación (`/auth`)
+- `POST /auth/register` → registrar usuario  
+- `POST /auth/login` → login con email y password  
+- Endpoints protegidos con `AuthGuard` usando JWT  
 
-### Login (`/auth/login`)
-- `POST /auth/login`  
-- Recibe `email` y `password`:
-```json
-{
-  "email": "hector@banorte.com",
-  "password": "password123"
-}
-```
-- Valida credenciales contra la base de datos.
-- Devuelve un **JWT**:
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
-}
-```
+### Usuarios (`/users`)
+- `GET /users` → lista todos los usuarios  
+- `GET /users/:id` → obtener usuario por ID  
+- `POST /users` → crear usuario  
+- `PATCH /users/:id` → actualizar usuario  
+- `DELETE /users/:id` → eliminar usuario  
 
-### JWT y protección de rutas
-- Los endpoints que requieren autenticación usan **AuthGuard**.  
-- Debes enviar el token JWT en el header `Authorization: Bearer <token>` para acceder.
+### Empresas (`/companies`)
+- `GET /companies` → lista todas las empresas  
+- `GET /companies/:id` → obtener empresa por ID  
+- `POST /companies` → crear empresa  
+- `PATCH /companies/:id` → actualizar empresa  
+- `DELETE /companies/:id` → eliminar empresa  
+
+### Categorías (`/categories`)
+- `GET /categories` → lista todas las categorías  
+- `GET /categories/:id` → obtener categoría por ID  
+- `POST /categories` → crear categoría  
+- `PATCH /categories/:id` → actualizar categoría  
+- `DELETE /categories/:id` → eliminar categoría  
+
+### Estados (`/states`)
+- `GET /states` → lista todos los estados  
+- `GET /states/:id` → obtener estado por ID  
+- `POST /states` → crear estado  
+- `PATCH /states/:id` → actualizar estado  
+- `DELETE /states/:id` → eliminar estado  
+
+### Reglas de negocio (`/rules`)
+- `GET /rules` → lista todas las reglas  
+- `GET /rules/:id` → obtener regla por ID  
+- `POST /rules` → crear regla  
+- `PATCH /rules/:id` → actualizar regla  
+- `DELETE /rules/:id` → eliminar regla  
 
 ---
 
@@ -159,4 +169,4 @@ El backend quedará disponible en `http://localhost:3000`.
 ## Equipo
 - **Backend**: NestJS + Prisma  
 - **Frontend**: React + Vite (otro repositorio)  
-- **DB**: PostgreSQL con Docker + Prisma
+- **DB**: PostgreSQL con Docker + Prisma  
