@@ -1,9 +1,9 @@
-# Banorte Backend  
+# Banorte Backend
 # TEST BUILD V3
 
 Este es el repositorio del backend del proyecto **Polaris**, construido con **NestJS**, **Prisma** y **PostgreSQL**.  
 El proyecto expone una API REST modular para la gestión de usuarios, empresas, categorías, estados y reglas de negocio.  
-Incluye autenticación y autorización con **JWT**.
+Incluye autenticación y autorización con **JWT**. Las siguientes funcionalidades ya están implementadas: **categories**, **states** y **auth (login/register)**.
 
 ---
 
@@ -13,7 +13,7 @@ Incluye autenticación y autorización con **JWT**.
 - [PostgreSQL](https://www.postgresql.org/) – Base de datos relacional.  
 - [Docker](https://www.docker.com/) – Orquestación de PostgreSQL y pgAdmin.  
 - [pgAdmin](https://www.pgadmin.org/) – GUI web para PostgreSQL.  
-- [JWT](https://jwt.io/) – Autenticación basada en tokens.  
+- [JWT](https://jwt.io/) – Autenticación basada en tokens.
 
 ---
 
@@ -54,7 +54,7 @@ Esto inicia:
 - PostgreSQL en `localhost:5433`
 - pgAdmin en `http://localhost:5050`
 
-Si ya tienes contenedores con el mismo nombre, elimina los antiguos antes:
+Si ya existen contenedores con el mismo nombre, elimínalos antes:
 ```bash
 docker ps -a
 docker rm -f <container_id>
@@ -86,7 +86,7 @@ Esto abre un panel web para explorar y editar tablas de la base de datos.
 ---
 
 ## 6. Seeder (datos iniciales)
-El archivo `prisma/seed.ts` incluye datos iniciales:  
+El archivo `prisma/seed.ts` incluye datos iniciales:
 
 - Rol **ADMIN**  
 - Usuario **Hector Martinez** (`HMtinez@banorte.mx`)  
@@ -95,7 +95,7 @@ El archivo `prisma/seed.ts` incluye datos iniciales:
 - Estado **Activo**  
 - Reglas de negocio:
   - Validar RFC (Banorte)  
-  - Monto Máximo (Santander)  
+  - Monto Máximo (Santander)
 
 Ejecutar con:
 ```bash
@@ -119,6 +119,40 @@ El backend quedará disponible en `http://localhost:3000`.
 - `POST /auth/register` → registrar usuario  
 - `POST /auth/login` → login con email y password  
 - Endpoints protegidos con `AuthGuard` usando JWT  
+- Enviar token en header `Authorization: Bearer <token>` para rutas protegidas
+
+#### Ejemplo: Registro
+```http
+POST /auth/register
+Content-Type: application/json
+
+{
+  "firstName": "Hector",
+  "middleName": "M",
+  "lastName1": "Martinez",
+  "lastName2": "Lopez",
+  "email": "hector@banorte.com",
+  "password": "password123"
+}
+```
+
+#### Ejemplo: Login
+```http
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "hector@banorte.com",
+  "password": "password123"
+}
+```
+
+Respuesta típica:
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+}
+```
 
 ### Usuarios (`/users`)
 - `GET /users` → lista todos los usuarios  
@@ -134,14 +168,14 @@ El backend quedará disponible en `http://localhost:3000`.
 - `PATCH /companies/:id` → actualizar empresa  
 - `DELETE /companies/:id` → eliminar empresa  
 
-### Categorías (`/categories`)
+### Categorías (`/categories`) - implementado
 - `GET /categories` → lista todas las categorías  
 - `GET /categories/:id` → obtener categoría por ID  
 - `POST /categories` → crear categoría  
 - `PATCH /categories/:id` → actualizar categoría  
 - `DELETE /categories/:id` → eliminar categoría  
 
-### Estados (`/states`)
+### Estados (`/states`) - implementado
 - `GET /states` → lista todos los estados  
 - `GET /states/:id` → obtener estado por ID  
 - `POST /states` → crear estado  
@@ -154,6 +188,16 @@ El backend quedará disponible en `http://localhost:3000`.
 - `POST /rules` → crear regla  
 - `PATCH /rules/:id` → actualizar regla  
 - `DELETE /rules/:id` → eliminar regla  
+- Las reglas pueden relacionarse con empresa, categoría y estado para su validación.
+
+---
+
+## Próximos módulos (pendientes)
+- `/files` → gestión y almacenamiento de archivos (Banorte)  
+- `/audit-log` → auditoría de cambios y eventos  
+- Integraciones adicionales y mejoras en validaciones y manejo de errores
+
+> Nota: **categories**, **states** y **auth** ya están implementados. Los módulos listados en esta sección están en la cola de desarrollo.
 
 ---
 
@@ -166,7 +210,14 @@ El backend quedará disponible en `http://localhost:3000`.
 
 ---
 
+## Buenas prácticas de desarrollo
+- Mantener la configuración sensible (ej. `JWT_SECRET`, `DATABASE_URL`) fuera del repositorio.  
+- Ejecutar migraciones y seeders en entornos de desarrollo únicamente.  
+- Usar branches por feature y Pull Requests para revisión de código.
+
+---
+
 ## Equipo
 - **Backend**: NestJS + Prisma  
-- **Frontend**: React + Vite (otro repositorio)  
-- **DB**: PostgreSQL con Docker + Prisma  
+- **Frontend**: React + Vite (repositorio separado)  
+- **DB**: PostgreSQL con Docker + Prisma
