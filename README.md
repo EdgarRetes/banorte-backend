@@ -208,13 +208,6 @@ Respuesta típica:
 
 ---
 
-## Buenas prácticas de desarrollo
-- Mantener la configuración sensible (ej. `JWT_SECRET`, `DATABASE_URL`) fuera del repositorio.  
-- Ejecutar migraciones y seeders en entornos de desarrollo únicamente.  
-- Usar branches por feature y Pull Requests para revisión de código.
-
----
-
 ## Equipo
 - **Backend**: NestJS + Prisma  
 - **Frontend**: React + Vite (repositorio separado)  
