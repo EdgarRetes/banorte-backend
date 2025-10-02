@@ -12,7 +12,7 @@ async function bootstrap() {
 
   // Enable CORS for frontend
   app.enableCors({
-    origin: 'http://localhost:5173', // frontend URL
+    origin: ['http://localhost:5173', 'https://polaris-frontend-theta.vercel.app'], // frontend URL
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
