@@ -4,38 +4,45 @@ import { AppModule } from './app.module';
 import helmet from 'helmet';
 
 async function bootstrap() {
-  // Create the NestJS application
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('api');
-  // Security middleware
-  app.use(helmet()); // adds HTTP headers to improve security
 
-  // Enable CORS for frontend
   app.enableCors({
-    origin: '*',
-    // origin: ['http://localhost:5173', 'https://polaris-frontend-theta.vercel.app'], // frontend URL
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    origin: ['http://localhost:5173', 'https://polaris-frontend-theta.vercel.app'],
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     credentials: true,
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accept',
+      'Origin',
+    ],
+    exposedHeaders: ['Authorization'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   });
 
-  // Global validation pipe
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+      crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
+    })
+  );
+
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // strip unknown properties
-      forbidNonWhitelisted: true, // throw an error if extra properties are sent
-      transform: true, // auto-transform payloads to DTO instances
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
 
-  // Define port
   const port = process.env.PORT ? Number(process.env.PORT) : 3000;
-
-  // Start the server
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0'); // Importante para Vercel
 
   console.log(`🚀 Application is running on: http://localhost:${port}`);
 }
 
-// Bootstrap the application
 bootstrap();
