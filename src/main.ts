@@ -16,7 +16,7 @@ async function bootstrap() {
     origin: '*',
     // origin: ['http://localhost:5173', 'https://polaris-frontend-theta.vercel.app'], // frontend URL
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    // credentials: true,
+    credentials: true,
   });
 
   // Global validation pipe
