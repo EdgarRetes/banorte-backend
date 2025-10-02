@@ -9,6 +9,7 @@ export class RulesController {
 
   @Post()
   create(@Body() dto: CreateRuleDto) {
+    console.log(dto);
     return this.rulesService.create(dto);
   }
 
