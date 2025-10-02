@@ -7,13 +7,13 @@ async function bootstrap() {
   // Create the NestJS application
   const app = await NestFactory.create(AppModule);
 
+  app.setGlobalPrefix('api');
   // Security middleware
   app.use(helmet()); // adds HTTP headers to improve security
 
   // Enable CORS for frontend
   app.enableCors({
-    origin: '*',
-    // origin: ['http://localhost:5173', 'https://polaris-frontend-theta.vercel.app'], // frontend URL
+    origin: ['http://localhost:5173', 'https://polaris-frontend-theta.vercel.app'], // frontend URL
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     // credentials: true,
   });
