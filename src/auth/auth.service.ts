@@ -9,7 +9,7 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async register(dto: RegisterDto) {
     const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
@@ -58,7 +58,7 @@ export class AuthService {
     if (!valid) throw new UnauthorizedException('Invalid credentials');
 
     const payload = { sub: user.id, email: user.email, roleId: user.roleId };
-    return { access_token: this.jwtService.sign(payload) };
+    return { access_token: this.jwtService.sign(payload, { expiresIn: '1h' }) };
   }
 
   // Optional helper: validate user (returns user without password)
