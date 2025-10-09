@@ -1,4 +1,19 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateLayoutValueDto } from './create-layout_value.dto';
+import { IsInt, IsOptional, IsString } from 'class-validator';
 
-export class UpdateLayoutValueDto extends PartialType(CreateLayoutValueDto) { }
+export class UpdateLayoutValueDto {
+  @IsInt()
+  @IsOptional()
+  fileId?: number;
+
+  @IsInt()
+  @IsOptional()
+  fieldId?: number;
+
+  @IsString()
+  @IsOptional()
+  value?: string;
+
+  @IsInt()
+  @IsOptional()
+  row?: number;
+}

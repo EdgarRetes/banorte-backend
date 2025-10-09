@@ -10,7 +10,7 @@ export class CreateLayoutValueDto {
   fieldId: number;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   value: string;
 
   @IsInt()

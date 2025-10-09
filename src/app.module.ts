@@ -12,6 +12,7 @@ import { FileParsersModule } from './file_parsers/file_parsers.module';
 import { CategoriesModule } from './categories/categories.module';
 import { StatesModule } from './states/states.module';
 import { AuditModule } from './audit_logs/audit.module';
+import { FileStoreModule } from './file_store/files.module'
 
 
 @Module({
@@ -28,7 +29,8 @@ import { AuditModule } from './audit_logs/audit.module';
     AuthModule,
     CategoriesModule,
     StatesModule,
-    AuditModule
+    AuditModule,
+    FileStoreModule
   ],
 })
 export class AppModule { }

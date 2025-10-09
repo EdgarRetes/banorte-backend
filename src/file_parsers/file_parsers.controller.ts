@@ -8,7 +8,7 @@ export class FileParsersController {
 
   @Post('parse')
   @UseInterceptors(FileInterceptor('file'))
-  async parseFile(@UploadedFile() file: Express.Multer.File) {
+  async parseFile(@UploadedFile() file: any) {
     if (!file) {
       throw new BadRequestException('No se recibió ningún archivo');
     }

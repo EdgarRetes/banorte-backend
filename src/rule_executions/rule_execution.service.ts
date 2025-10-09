@@ -11,7 +11,7 @@ export class RuleExecutionService {
       data: {
         fileId: dto.fileId,
         ruleId: dto.ruleId, // si viene undefined, se manda null
-        status: dto.status
+        status: 'IN_PROGRESS'
       },
       include: { rule: true, file: true },
     });

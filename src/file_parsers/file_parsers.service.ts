@@ -6,7 +6,7 @@ import { parseDocx } from './parsers/parserDocx';
 
 @Injectable()
 export class FileParsersService {
-  async parseFile(file: Express.Multer.File) {
+  async parseFile(file: any) {
     if (!file || !file.originalname) {
       throw new BadRequestException('Archivo inválido o sin nombre');
     }

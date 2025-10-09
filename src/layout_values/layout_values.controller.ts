@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
 import { LayoutValuesService } from './layout_values.service';
 import { CreateLayoutValueDto } from './dto/create-layout_value.dto';
-// import { UpdateRuleDto } from './dto/update-layout_values.dto';
+import { UpdateLayoutValueDto } from './dto/update-layout_value.dto';
 
 @Controller('layout-values')
 export class LayoutValuesController {
@@ -18,6 +18,16 @@ export class LayoutValuesController {
   }
 
 
+  @Patch('bulk')
+  async updateBulk(@Body() values: UpdateLayoutValueDto[]) {
+    return this.layoutValuesService.updateBulk(values);
+  }
+
+  @Patch('validate/:fileId')
+  async validateFile(@Param('fileId') fileId: string) {
+    const status = await this.layoutValuesService.validateFileLayout(+fileId);
+    return { fileId: +fileId, status };
+  }
   // @Get()
   // findAll() {
   //   return this.layoutValuesService.findAll();
@@ -28,10 +38,6 @@ export class LayoutValuesController {
   //   return this.layoutValuesService.findOne(+id);
   // }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() dto: UpdateRuleDto) {
-  //   return this.layoutValuesService.update(+id, dto);
-  // }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {

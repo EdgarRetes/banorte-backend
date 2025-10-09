@@ -1,6 +1,6 @@
 import pdfParse from "pdf-parse";
 
-export const parsePdf = async (file: Express.Multer.File): Promise<string[]> => {
+export const parsePdf = async (file: any): Promise<string[]> => {
   if (!file.buffer) throw new Error("Archivo vacío");
 
   const data = await pdfParse(file.buffer);

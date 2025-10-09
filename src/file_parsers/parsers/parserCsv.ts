@@ -1,6 +1,6 @@
 import Papa from "papaparse";
 
-export const parseCsv = async (file: Express.Multer.File): Promise<Record<string, any>[]> => {
+export const parseCsv = async (file: any): Promise<Record<string, any>[]> => {
   return new Promise((resolve, reject) => {
     if (!file.buffer) return reject(new Error("Archivo vacío"));
 
