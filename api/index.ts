@@ -35,7 +35,8 @@ export default async (req: Request, res: Response) => {
   const origin = req.headers.origin;
   const allowedOrigins = [
     'http://localhost:5173',
-    'https://polaris-frontend-theta.vercel.app'
+    'https://polaris-frontend-theta.vercel.app',
+    'http://localhost:5174'
   ];
 
   if (origin && allowedOrigins.includes(origin)) {

@@ -8,7 +8,7 @@ export class AuditService {
   async findAll() {
     return this.prisma.auditLog.findMany({
       orderBy: {
-        createdAt: 'desc', // 👈 ordena del más reciente al más antiguo
+        createdAt: 'desc',
       },
       select: {
         id: true,
