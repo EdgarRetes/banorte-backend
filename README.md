@@ -1,8 +1,7 @@
 # Banorte Backend  
 ### Implementación de Roles, Tokens y Auditoría
 
-Este proyecto corresponde al **backend del sistema Polaris**, desarrollado con **NestJS**, **Prisma** y **PostgreSQL**.  
-Provee una API modular y segura para gestionar **usuarios, roles, empresas, categorías, estados y auditorías**, además de manejar autenticación mediante **JWT**.
+API modular y segura para gestionar **usuarios, roles, empresas, categorías, estados y auditorías**, además de manejar autenticación mediante **JWT**.
 
 ---
 
