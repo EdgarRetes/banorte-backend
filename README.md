@@ -1,6 +1,16 @@
 # Banorte Backend  
 ### Implementación de Roles, Tokens y Auditoría
 
+**Importante:**  
+Archivo `.env` del **frontend** contenga las siguientes variables para conexión y funcionamiento correctos:
+
+```env
+# Backend URL
+VITE_BACKEND_URL=http://localhost:3000/api
+```
+
+---
+
 API modular y segura para gestionar **usuarios, roles, empresas, categorías, estados y auditorías**, además de manejar autenticación mediante **JWT**.
 
 ---
