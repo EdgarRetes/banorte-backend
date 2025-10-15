@@ -30,7 +30,8 @@ import { FileStoreModule } from './file_store/files.module'
     CategoriesModule,
     StatesModule,
     AuditModule,
-    FileStoreModule
+    FileStoreModule,
+    AuditModule
   ],
 })
 export class AppModule { }
