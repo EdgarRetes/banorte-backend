@@ -1,4 +1,9 @@
-import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  UnauthorizedException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -9,13 +14,16 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
+  // Registro de usuario
   async register(dto: RegisterDto) {
-    const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
+    const existing = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
     if (existing) throw new ConflictException('Email already in use');
 
-    // If roleId not provided, use / create 'User' role
+    // Si no se pasa roleId, asigna rol "User" por defecto
     let roleId = dto.roleId;
     if (!roleId) {
       let role = await this.prisma.role.findUnique({ where: { name: 'User' } });
@@ -37,36 +45,57 @@ export class AuthService {
         password: hashed,
         roleId,
       },
-      // avoid returning the password
       select: {
         id: true,
         email: true,
         firstName: true,
         lastName1: true,
         roleId: true,
+        role: { select: { name: true } },
       },
     });
 
-    return user;
+    // Generar token inmediatamente tras registrarse
+    const payload = { sub: user.id, email: user.email, roleId: user.roleId };
+    const token = this.jwtService.sign(payload, { expiresIn: '1h' });
+
+    return { user, access_token: token };
   }
 
+  // Login de usuario
   async login(email: string, password: string) {
-    const user = await this.prisma.user.findUnique({ where: { email } });
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+      include: { role: true },
+    });
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) throw new UnauthorizedException('Invalid credentials');
 
-    const payload = { sub: user.id, email: user.email, roleId: user.roleId };
-    return { access_token: this.jwtService.sign(payload, { expiresIn: '1h' }) };
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      roleId: user.roleId,
+      role: user.role.name,
+    };
+    const token = this.jwtService.sign(payload, { expiresIn: '1h' });
+
+    return { access_token: token, role: user.role.name };
   }
 
-  // Optional helper: validate user (returns user without password)
+  // Método opcional: Validar token / usuario
   async validateUserByEmail(email: string) {
-    const user = await this.prisma.user.findUnique({
+    return this.prisma.user.findUnique({
       where: { email },
-      select: { id: true, email: true, firstName: true, lastName1: true, roleId: true },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName1: true,
+        roleId: true,
+        role: { select: { name: true } },
+      },
     });
-    return user;
   }
 }

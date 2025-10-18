@@ -1,19 +1,19 @@
-import { IsInt, IsOptional, IsString } from 'class-validator';
+import { IsInt, IsOptional, IsString, Min } from 'class-validator';
 
 export class UpdateLayoutValueDto {
   @IsInt()
-  @IsOptional()
-  fileId?: number;
+  @Min(1)
+  fileId: number;
 
   @IsInt()
-  @IsOptional()
-  fieldId?: number;
+  @Min(1)
+  fieldId: number;
+
+  @IsInt()
+  @Min(0)
+  row: number;
 
   @IsString()
   @IsOptional()
   value?: string;
-
-  @IsInt()
-  @IsOptional()
-  row?: number;
 }

@@ -1,214 +1,204 @@
-# Banorte Backend
-# TEST BUILD V3
+# Banorte Backend  
+### Implementación de Roles, Tokens y Auditoría
 
-Este es el repositorio del backend del proyecto **Polaris**, construido con **NestJS**, **Prisma** y **PostgreSQL**.  
-El proyecto expone una API REST modular para la gestión de usuarios, empresas, categorías, estados y reglas de negocio.  
-Incluye autenticación y autorización con **JWT**. Las siguientes funcionalidades ya están implementadas: **categories**, **states** y **auth (login/register)**.
+**Importante:**  
+Archivo `.env` del **frontend** contenga las siguientes variables para conexión y funcionamiento correctos:
 
----
-
-## Stack Tecnológico
-- [NestJS](https://nestjs.com/) – Framework de Node.js para estructurar el backend.  
-- [Prisma](https://www.prisma.io/) – ORM para manejar la base de datos en PostgreSQL.  
-- [PostgreSQL](https://www.postgresql.org/) – Base de datos relacional.  
-- [Docker](https://www.docker.com/) – Orquestación de PostgreSQL y pgAdmin.  
-- [pgAdmin](https://www.pgadmin.org/) – GUI web para PostgreSQL.  
-- [JWT](https://jwt.io/) – Autenticación basada en tokens.
+```env
+# Backend URL
+VITE_BACKEND_URL=http://localhost:3000/api
+```
 
 ---
 
-## 1. Clonar repositorio
+API modular y segura para gestionar **usuarios, roles, empresas, categorías, estados y auditorías**, además de manejar autenticación mediante **JWT**.
+
+---
+
+## Tecnologías Principales
+- **NestJS** – Framework Node.js modular y escalable.  
+- **Prisma ORM** – Acceso tipado y seguro a PostgreSQL.  
+- **PostgreSQL** – Base de datos relacional.  
+- **Docker + pgAdmin** – Orquestación y administración de base de datos.  
+- **JWT (JSON Web Tokens)** – Autenticación y autorización con tokens firmados.  
+
+---
+
+## 1. Instalación y Configuración
+
+### Clonar el proyecto
 ```bash
 git clone https://github.com/malikethbbz/banorte-backend.git
 cd banorte-backend
 ```
 
----
-
-## 2. Configurar variables de entorno
-Crear un archivo `.env` en la raíz con:
+### Variables de entorno
+Crea un archivo `.env` con el siguiente contenido:
 
 ```env
-# App
 PORT=3000
 NODE_ENV=development
 JWT_SECRET=supersecret_jwt_key
 
-# Base de datos
 DATABASE_URL="postgresql://postgres:postgres@localhost:5433/banorte_db?schema=public"
 
-# pgAdmin
 PGADMIN_EMAIL=admin@banorte.com
 PGADMIN_PASSWORD=banorte123
 ```
 
 ---
 
-## 3. Levantar base de datos y pgAdmin
-Con Docker:
+## 2. Configurar base de datos
+
+### Iniciar PostgreSQL y pgAdmin
 ```bash
 docker compose up -d
 ```
-
-Esto inicia:
+Esto levanta:
 - PostgreSQL en `localhost:5433`
 - pgAdmin en `http://localhost:5050`
 
-Si ya existen contenedores con el mismo nombre, elimínalos antes:
-```bash
-docker ps -a
-docker rm -f <container_id>
-```
-
----
-
-## 4. Instalar dependencias
-```bash
-npm install
-npm install @nestjs/mapped-types
-```
-
----
-
-## 5. Migraciones y base de datos
-
-### 5.1 Ejecutar migración inicial
+### Ejecutar migraciones
 ```bash
 npx prisma migrate dev --name init
 ```
 
-### 5.2 (Opcional) Abrir Prisma Studio
-```bash
-npx prisma studio
-```
-Esto abre un panel web para explorar y editar tablas de la base de datos.
-
----
-
-## 6. Seeder (datos iniciales)
-El archivo `prisma/seed.ts` incluye datos iniciales:
-
-- Rol **ADMIN**  
-- Usuario **Hector Martinez** (`HMtinez@banorte.mx`)  
-- Empresas **Banorte** y **Santander**  
-- Categoría **General**  
-- Estado **Activo**  
-- Reglas de negocio:
-  - Validar RFC (Banorte)  
-  - Monto Máximo (Santander)
-
-Ejecutar con:
+### Cargar datos iniciales
 ```bash
 npm run prisma:seed
 ```
 
+Crea automáticamente:
+- Rol **Admin**
+- Rol **User**
+- Usuario administrador `admin@local.com` con contraseña `Admin123!`
+
 ---
 
-## 7. Levantar servidor
+## 3. Ejecución del servidor
 ```bash
+npm install
 npm run start:dev
 ```
 
-El backend quedará disponible en `http://localhost:3000`.
+API disponible en:  
+`http://localhost:3000`
 
 ---
 
-## Endpoints Disponibles
+## 4. Autenticación y Autorización
 
-### Autenticación (`/auth`)
-- `POST /auth/register` → registrar usuario  
-- `POST /auth/login` → login con email y password  
-- Endpoints protegidos con `AuthGuard` usando JWT  
-- Enviar token en header `Authorization: Bearer <token>` para rutas protegidas
+El sistema implementa un esquema **JWT** donde cada usuario obtiene un token al iniciar sesión.  
+Los controladores utilizan **guards** y **decoradores personalizados** para proteger rutas y restringir acciones según el rol del usuario.
 
-#### Ejemplo: Registro
-```http
-POST /auth/register
-Content-Type: application/json
-
-{
-  "firstName": "Hector",
-  "middleName": "M",
-  "lastName1": "Martinez",
-  "lastName2": "Lopez",
-  "email": "hector@banorte.com",
-  "password": "password123"
-}
-```
-
-#### Ejemplo: Login
+### Login
 ```http
 POST /auth/login
 Content-Type: application/json
 
 {
-  "email": "hector@banorte.com",
-  "password": "password123"
+  "email": "admin@local.com",
+  "password": "Admin123!"
 }
 ```
 
-Respuesta típica:
+Respuesta:
 ```json
 {
   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
 }
 ```
 
+El token se debe incluir en el encabezado:
+```
+Authorization: Bearer <token>
+```
+
+### Roles disponibles
+- **Admin** → acceso total a creación, modificación y eliminación.  
+- **User** → acceso solo lectura a recursos.  
+
+Los decoradores `@Roles('Admin')` y `@UseGuards(JwtAuthGuard, RolesGuard)` controlan estas restricciones.
+
+---
+
+## 5. Auditoría
+
+Cada operación importante (crear, actualizar o eliminar) se registra automáticamente en la tabla **AuditLog**, con la siguiente información:
+- Entidad afectada (`Company`, `Category`, `State`)
+- Tipo de acción (`CREATE`, `UPDATE`, `DELETE`)
+- Estado anterior y posterior (`before`, `after`)
+- Usuario que ejecutó la acción
+- Fecha y hora
+
+Consulta de auditoría:
+```http
+GET /api/audit
+Authorization: Bearer <token_admin>
+```
+
+---
+
+## 6. Endpoints Principales
+
+### Autenticación (`/auth`)
+- `POST /auth/register` → Crear usuario nuevo.  
+- `POST /auth/login` → Iniciar sesión y obtener token.  
+
 ### Usuarios (`/users`)
-- `GET /users` → lista todos los usuarios  
-- `GET /users/:id` → obtener usuario por ID  
-- `POST /users` → crear usuario  
-- `PATCH /users/:id` → actualizar usuario  
-- `DELETE /users/:id` → eliminar usuario  
+- CRUD completo, con protección JWT.
 
 ### Empresas (`/companies`)
-- `GET /companies` → lista todas las empresas  
-- `GET /companies/:id` → obtener empresa por ID  
-- `POST /companies` → crear empresa  
-- `PATCH /companies/:id` → actualizar empresa  
-- `DELETE /companies/:id` → eliminar empresa  
+- CRUD con auditoría integrada.  
+- Solo **Admin** puede crear, actualizar o eliminar.
 
-### Categorías (`/categories`) - implementado
-- `GET /categories` → lista todas las categorías  
-- `GET /categories/:id` → obtener categoría por ID  
-- `POST /categories` → crear categoría  
-- `PATCH /categories/:id` → actualizar categoría  
-- `DELETE /categories/:id` → eliminar categoría  
+### Categorías (`/categories`)
+- CRUD con auditoría integrada y restricción por rol.
 
-### Estados (`/states`) - implementado
-- `GET /states` → lista todos los estados  
-- `GET /states/:id` → obtener estado por ID  
-- `POST /states` → crear estado  
-- `PATCH /states/:id` → actualizar estado  
-- `DELETE /states/:id` → eliminar estado  
+### Estados (`/states`)
+- CRUD con registro de auditoría.
 
-### Reglas de negocio (`/rules`)
-- `GET /rules` → lista todas las reglas  
-- `GET /rules/:id` → obtener regla por ID  
-- `POST /rules` → crear regla  
-- `PATCH /rules/:id` → actualizar regla  
-- `DELETE /rules/:id` → eliminar regla  
-- Las reglas pueden relacionarse con empresa, categoría y estado para su validación.
+### Auditoría (`/audit`)
+- `GET /audit` → Ver registros de acciones ejecutadas por usuarios.
 
 ---
 
-## Próximos módulos (pendientes)
-- `/files` → gestión y almacenamiento de archivos (Banorte)  
-- `/audit-log` → auditoría de cambios y eventos  
-- Integraciones adicionales y mejoras en validaciones y manejo de errores
+## 7. Validación de Roles y Tokens
+
+### Ejemplo de prueba con Postman:
+1. Iniciar sesión como admin → obtener token.  
+2. Crear categoría (`POST /api/categories`) → éxito 201.  
+3. Registrar un usuario normal (`POST /auth/register`).  
+4. Iniciar sesión con usuario normal y repetir el paso anterior → error 403 “Forbidden”.  
+
+Esto confirma la funcionalidad de roles y autenticación.
 
 ---
 
-## Scripts útiles
-- `npm run start:dev` → inicia en modo desarrollo.  
-- `npm run build` → compila el proyecto.  
-- `npx prisma migrate dev` → aplica migraciones.  
-- `npx prisma studio` → abre panel gráfico de la DB.  
-- `npm run prisma:seed` → ejecuta el seeder inicial.  
+## 8. Scripts útiles
+
+| Comando | Descripción |
+|----------|--------------|
+| `npm run start:dev` | Inicia el servidor en modo desarrollo |
+| `npm run build` | Compila el proyecto |
+| `npx prisma migrate dev` | Aplica migraciones |
+| `npm run prisma:seed` | Carga datos iniciales |
+| `npx prisma studio` | Abre interfaz visual de la base de datos |
 
 ---
 
-## Equipo
+## 9. Estado actual del proyecto
+
+Implementado:
+- Autenticación con JWT  
+- Roles (Admin/User)  
+- Protección de rutas con guards  
+- Auditoría de operaciones  
+- CRUD completo para empresas, categorías y estados  
+
+---
+
+## 10. Equipo
 - **Backend**: NestJS + Prisma  
 - **Frontend**: React + Vite (repositorio separado)  
-- **DB**: PostgreSQL con Docker + Prisma
+- **Base de datos**: PostgreSQL con Docker  
