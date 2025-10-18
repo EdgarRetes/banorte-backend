@@ -29,4 +29,8 @@ export class CompaniesService {
   remove(id: number) {
     return this.prisma.company.delete({ where: { id } });
   }
+
+  async countCompanies(): Promise<number> {
+    return this.prisma.company.count();
+  }
 }

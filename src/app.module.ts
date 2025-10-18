@@ -12,8 +12,8 @@ import { FileParsersModule } from './file_parsers/file_parsers.module';
 import { CategoriesModule } from './categories/categories.module';
 import { StatesModule } from './states/states.module';
 import { AuditModule } from './audit_logs/audit.module';
-import { FileStoreModule } from './file_store/files.module'
-
+import { FileStoreModule } from './file_store/files.module';
+import { StatsModule } from './stats/stats.module';
 
 @Module({
   imports: [
@@ -30,7 +30,8 @@ import { FileStoreModule } from './file_store/files.module'
     CategoriesModule,
     StatesModule,
     AuditModule,
-    FileStoreModule
-  ],
+    FileStoreModule,
+    StatsModule
+  ]
 })
 export class AppModule { }
