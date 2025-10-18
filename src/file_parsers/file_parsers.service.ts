@@ -1,4 +1,5 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { parseCsv } from './parsers/parserCsv';
 import { parseXml } from './parsers/parserXml';
 import { parsePdf } from './parsers/parserPdf';
@@ -7,6 +8,8 @@ import { parseTxt } from './parsers/parserTxt';
 
 @Injectable()
 export class FileParsersService {
+  constructor(private readonly prisma: PrismaService) {}
+
   async parseFile(file: any) {
     if (!file || !file.originalname) {
       throw new BadRequestException('Archivo inválido o sin nombre');

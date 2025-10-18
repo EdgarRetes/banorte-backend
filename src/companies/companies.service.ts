@@ -43,4 +43,8 @@ export class CompaniesService {
     await this.audit.log(userId || null, 'Company', id, AuditAction.DELETE, before, null);
     return deleted;
   }
+
+  async countCompanies(): Promise<number> {
+    return this.prisma.company.count();
+  }
 }
