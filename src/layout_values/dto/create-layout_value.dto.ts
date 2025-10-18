@@ -1,19 +1,19 @@
-import { IsNotEmpty, IsOptional, IsString, IsInt } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
 
 export class CreateLayoutValueDto {
   @IsInt()
-  @IsNotEmpty()
+  @Min(1)
   fileId: number;
 
   @IsInt()
-  @IsNotEmpty()
+  @Min(1)
   fieldId: number;
+
+  @IsInt()
+  @Min(0)
+  row: number;
 
   @IsString()
   @IsOptional()
-  value: string;
-
-  @IsInt()
-  @IsNotEmpty()
-  row: number;
+  value?: string;
 }
