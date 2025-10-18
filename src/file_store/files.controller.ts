@@ -20,14 +20,16 @@ import { Roles } from '../auth/guards/roles.decorator';
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
+  // Admin y User pueden consultar archivos
   @Get()
   @Roles('Admin', 'User')
   getFiles() {
     return this.filesService.getFiles();
   }
 
+  // Admin y User pueden subir archivos
   @Post('upload')
-  @Roles('Admin')
+  @Roles('Admin', 'User')
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(
     @UploadedFile() file: Express.Multer.File,
@@ -46,6 +48,7 @@ export class FilesController {
     return { success: true, file: file.originalname };
   }
 
+  // Solo Admin puede borrar archivos
   @Delete(':id')
   @Roles('Admin')
   removeFile(@Param('id') id: string) {
