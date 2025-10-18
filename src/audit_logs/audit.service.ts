@@ -28,7 +28,9 @@ export class AuditService {
 
   async findAll() {
     return this.prisma.auditLog.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy: {
+        createdAt: 'desc',
+      },
       select: {
         id: true,
         entityName: true,

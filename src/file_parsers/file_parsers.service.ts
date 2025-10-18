@@ -3,6 +3,7 @@ import { parseCsv } from './parsers/parserCsv';
 import { parseXml } from './parsers/parserXml';
 import { parsePdf } from './parsers/parserPdf';
 import { parseDocx } from './parsers/parserDocx';
+import { parseTxt } from './parsers/parserTxt';
 
 @Injectable()
 export class FileParsersService {
@@ -26,6 +27,8 @@ export class FileParsersService {
       case 'docx':
       case 'doc':
         return parseDocx(file); 
+      case 'txt':
+        return parseTxt(file);
       default:
         throw new BadRequestException('Tipo de archivo no soportado');
     }
