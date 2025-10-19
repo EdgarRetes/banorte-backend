@@ -41,7 +41,7 @@ export class LayoutValuesService {
       }
 
       return created;
-    } catch (error) {
+    } catch (error: any) {
       if (error.code === 'P2002') {
         throw new BadRequestException(
           `Duplicate entry for combination (fileId=${dto.fileId}, fieldId=${dto.fieldId}, row=${dto.row})`
@@ -88,7 +88,20 @@ export class LayoutValuesService {
 
   // Validar un archivo
   async validateFileLayout(fileId: number) {
+    // Contar el número de LayoutFields
     const totalFields = await this.prisma.layoutField.count();
+
+    // Obtener todas las filas distintas del archivo
+    const rows = await this.prisma.layoutValue.findMany({
+      where: { fileId },
+      select: { row: true },
+    });
+    const rowCount = new Set(rows.map(r => r.row)).size;
+
+    // Total de valores esperados = filas * campos
+    const totalValuesExpected = rowCount * totalFields;
+
+    // Contar los valores que no están vacíos
     const valueCount = await this.prisma.layoutValue.count({
       where: {
         fileId,
@@ -96,8 +109,10 @@ export class LayoutValuesService {
       },
     });
 
-    const status = valueCount >= totalFields ? 'SUCCESS' : 'FAILED';
+    // Solo SUCCESS si todos los valores existen
+    const status = valueCount === totalValuesExpected ? 'SUCCESS' : 'FAILED';
 
+    // Actualizar el estado de las ejecuciones
     await this.prisma.ruleExecution.updateMany({
       where: { fileId },
       data: { status },
